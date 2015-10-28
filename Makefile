@@ -48,13 +48,14 @@ OMITFP=-fomit-frame-pointer
 # Name of .pc file. "lua5.1" on Debian/Ubuntu
 LUAPKG=lua5.1
 OUTFILE=gd.so
-TINC=$('TINC')
+# TINC=$('TORCH_INCLUDE')
+
 
 
 CFLAGS=-O3 -Wall -fPIC $(OMITFP)
 CFLAGS+=`$(GDLIBCONFIG) --cflags`
 CFLAGS+=-DVERSION=\"$(VERSION)\"
-CFLAGS+=-I$(TINC)
+CFLAGS+=-I$(TORCH_INCLUDE)
 
 
 GDFEATURES=`$(GDLIBCONFIG) --features |sed -e "s/GD_/-DGD_/g"`
