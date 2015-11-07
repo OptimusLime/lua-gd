@@ -108,7 +108,7 @@ test: $(OUTFILE)
 	$(LUABIN) test_features.lua
 
 gd.lo: luagd.c
-	$(CC) --dynamiclib -o gd.lo -v -c $(GDFEATURES) $(CFLAGS) luagd.c 
+	$(CC) -o gd.lo -v -c $(GDFEATURES) $(CFLAGS) luagd.c 
 
 install: $(OUTFILE)
 	install -D -s $(OUTFILE) $(DESTDIR)/$(INSTALL_PATH)/$(OUTFILE)
