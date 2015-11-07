@@ -29,11 +29,13 @@
 VERSION=2.0.33r3
 
 # Command used to run Lua code
-LUABIN=qlua
+LUABIN=$(TORCH_BIN)/luajit
 
 # Path to the utility 'gdlib-config'. This may be changed to compile the
 # module with development versions of libgd.
 GDLIBCONFIG=gdlib-config
+LIBPNGCONFIG=libpng-config
+FREETYPECONFIG=freetype-config
 
 # Optimization for the brave of heart ;)
 OMITFP=-fomit-frame-pointer
@@ -55,17 +57,17 @@ OUTFILE=gd.so
 CFLAGS=-O3 -Wall -fPIC $(OMITFP)
 CFLAGS+=`$(GDLIBCONFIG) --cflags`
 CFLAGS+=-DVERSION=\"$(VERSION)\"
-CFLAGS+=-I$(TORCH_INCLUDE)
+CFLAGS+= -I$(TORCH_INCLUDE)
 
 
 GDFEATURES=`$(GDLIBCONFIG) --features |sed -e "s/GD_/-DGD_/g"`
-LFLAGS=-shared `$(GDLIBCONFIG) --ldflags` `$(GDLIBCONFIG) --libs` -lgd
+LFLAGS=-shared `$(GDLIBCONFIG) --ldflags` `$(LIBPNGCONFIG) --ldflags` `$(FREETYPECONFIG) --libs` `$(GDLIBCONFIG) --libs` -lgd
+LFLAGS+=-L$(TORCH_LIBS) -lluajit
 
 INSTALL_PATH := `$(LUABIN) -e'                          \
     for dir in package.cpath:gmatch("(/[^?;]+)?") do    \
         io.write(dir)                                   \
         os.exit(0)                                      \
-    end                                                 \
     os.exit(1)                                          \
 '`
 
@@ -106,7 +108,7 @@ test: $(OUTFILE)
 	$(LUABIN) test_features.lua
 
 gd.lo: luagd.c
-	$(CC) -o gd.lo -c $(GDFEATURES) $(CFLAGS) luagd.c
+	$(CC) --dynamiclib -o gd.lo -v -c $(GDFEATURES) $(CFLAGS) luagd.c 
 
 install: $(OUTFILE)
 	install -D -s $(OUTFILE) $(DESTDIR)/$(INSTALL_PATH)/$(OUTFILE)

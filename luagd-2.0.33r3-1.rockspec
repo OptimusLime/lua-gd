@@ -32,7 +32,13 @@ external_dependencies = {
 build = {
     type = "make",
     platforms = {
-        unix = {
+        osx = {
+	    build_pass = true,
+            install_pass = false,
+            install = { lib = { "gd.so" } },
+            copy_directories = { "doc", "demos" }
+	},
+	unix = {
             build_pass = true,
             install_pass = false,
             install = { lib = { "gd.so" } },
